@@ -6,6 +6,7 @@ import Home from './views/Home.vue'
 
 Vue.use(Router)
 const router =new Router ({
+	mode:'history',
 	routes:[{
 		path:'/login',
 		component: Login
@@ -15,7 +16,7 @@ const router =new Router ({
 		component: Signup
 	},
 	{
-		path:'/home',
+		path:'/',
 		component: Home
 	}]
 })
