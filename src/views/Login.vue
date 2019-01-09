@@ -29,7 +29,15 @@
 </template>
 <script>
 	import Axios from 'axios'
+	import config from '@/config' 
 	export default{
+		beforeRouteEnter(to,from,next){
+			if(localStorage.getItem('auth')){
+				return next({path:"/"});
+			}else{
+				next();
+			}
+		},
 		data(){
 			return {
 				email:'',
@@ -42,7 +50,7 @@
 		methods:{
 			loginUser(){
 				this.loading = true
-				Axios.post('https://react-blog-api.bahdcasts.com/api/auth/login',{
+				Axios.post(`${config.apiUrl}/auth/login`,{
 					email: this.email,
 					password: this.password
 
@@ -52,11 +60,13 @@
 					const {data} = response.data;
 					localStorage.setItem('auth',JSON.stringify(data))
 					this.$root.auth = data
+					this.$noty.success("Welcome back")
 					this.$router.push('/')
 				
 				}).catch(({response}) => {
 					this.loading = false;
 					this.submitted = true;
+					this.$noty.error("Oops, something went wrong!")
 					if(response.status === 401){
 						this.errors = {
 							email:['Wrong Email Please try again']

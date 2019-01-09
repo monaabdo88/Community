@@ -39,7 +39,15 @@
 </template>
 <script>
 	import Axios from 'axios'
+	import config from '@/config'
 	export default{
+		beforeRouteEnter(to,from,next){
+			if(localStorage.getItem('auth')){
+				return next({path:"/"});
+			}else{
+				next();
+			}
+		},
 		data(){
 			return{
 				name:"",
@@ -53,7 +61,7 @@
 		methods:{
 			RegisterUser(){
 				this.loading = true
-				Axios.post('https://react-blog-api.bahdcasts.com/api/auth/register',{
+				Axios.post(`${config.apiUrl}/auth/register`,{
 					name:this.name,
 					email:this.email,
 					password:this.password
@@ -64,11 +72,13 @@
 					const {data} = response.data;
 					localStorage.setItem('auth',JSON.stringify(data))
 					this.$root.auth = data
+					this.$noty.success("Successfully Register")
 					this.$router.push('/')
 				})
 				.catch(({response}) => {
 					this.loading = false;
 					this.submitted = true,
+					this.$noty.error("Oops, something went wrong!")
 					this.errors = response.data
 				})
 			}
